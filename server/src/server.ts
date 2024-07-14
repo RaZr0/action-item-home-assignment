@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import usersController from './controllers/users.controller';
-// import postsController from './controllers/posts.controller';
 
 const app: Express = express();
 app.use(cors());
@@ -19,4 +18,3 @@ app.listen(port, () => {
 
 
 app.use('/users' , usersController)
-// app.use('/posts' , postsController)
