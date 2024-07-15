@@ -1,6 +1,7 @@
 import express from "express";
+import { AddUserDto } from "../dtos/add-user.dto";
 import usersService from "../services/users.service";
-import { UserModel } from "../models/user.model";
+import { UpdateUserDto } from "../dtos/update-user.dto";
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -17,7 +18,7 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const user: UserModel = req.body;
+        const user: AddUserDto = req.body;
         if (!req.body)
             throw 'no body';
         await usersService.add(user);
@@ -29,12 +30,14 @@ router.post('/', async (req, res) => {
 })
 
 
-router.put('/', async (req, res) => {
+router.patch('/:id', async (req, res) => {
     try {
-        const user: UserModel = req.body;
+        const user: UpdateUserDto = req.body;
+        const { id } = req.params;
+
         if (!req.body)
             throw 'no body';
-        await usersService.update(user);
+        await usersService.update(id, user);
         res.status(200).send();
     }
     catch (err) {

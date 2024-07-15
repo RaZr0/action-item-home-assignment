@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { getRandomUsers } from "../../services/random-user.service"
 import { usersStore } from "../../store/users.store"
 import { HomepageStyles } from "./Homepage.styles"
+import { Header } from "../../components/layout/Header/Header"
 
 export const Homepage = () => {
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ export const Homepage = () => {
         try {
             const res = await getRandomUsers(10);
             usersStore.setUsers(res.data.results);
-            navigate('users');
+            navigate('/users');
         }
         catch (err) {
 
@@ -29,5 +30,5 @@ export const Homepage = () => {
             </Button>
         </Link>
 
-    </HomepageStyles >
+    </HomepageStyles>
 }

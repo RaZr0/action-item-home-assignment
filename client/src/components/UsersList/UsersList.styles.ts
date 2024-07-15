@@ -6,3 +6,9 @@ export const UsersListStyles = styled('ul')(({ theme }) => ({
     justifyContent: 'center',
     gap: '1rem'
 }));
+
+
+export const UserItemStyled = styled('li')(({ theme }) => ({
+    width: '345px',
+    cursor: 'pointer'
+}));

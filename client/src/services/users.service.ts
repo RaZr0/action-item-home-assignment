@@ -1,6 +1,7 @@
 import axios from "axios";
 import { GetUser } from "../interfaces/user.interface";
 import { AddUserDto } from "../dtos/add-user.dto";
+import { UpdateUserDto } from "../dtos/update-user.dto";
 
 
 export const getUsers = async () => {
@@ -20,9 +21,9 @@ export const addUser = async (user: AddUserDto) => {
 };
 
 
-export const updateUser = async (user: AddUserDto) => {
-  const response = await axios.put(
-    "http://localhost:3001/users",
+export const updateUser = async (id: string, user: UpdateUserDto) => {
+  const response = await axios.patch(
+    `http://localhost:3001/users/${id}`,
     user
   );
   return response;

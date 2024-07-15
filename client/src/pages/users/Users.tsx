@@ -7,6 +7,7 @@ import { Result } from "../../interfaces/random-user.interface"
 import { User } from "../../interfaces/user.interface"
 import { usersStore } from "../../store/users.store"
 import { UserDetails } from "../user/User"
+import { Header } from "../../components/layout/Header/Header"
 
 export const Users = observer(() => {
     const navigate = useNavigate();
@@ -14,11 +15,16 @@ export const Users = observer(() => {
     const [filteredUsers, setFilteredUsers] = useState<User[]>();
 
     useEffect(() => {
-        setFilteredUsers(convertToUser(usersStore.users));
-    }, [])
+        filterUsers(usersStore.usersFilter);
+    }, [usersStore.users])
 
 
     function onFilterChange(value: string) {
+        usersStore.setUsersFilter(value);
+        filterUsers(value);
+    }
+
+    function filterUsers(value : string){
         const valueLower = value.toLocaleLowerCase();
         setFilteredUsers(
             convertToUser(usersStore.users.filter((u: Result) => !valueLower ||
@@ -33,7 +39,7 @@ export const Users = observer(() => {
             return {
                 id: u.login.uuid,
                 thumbnailUrl: u.picture.thumbnail,
-                title : u.name.title,
+                title: u.name.title,
                 firstName: u.name.first,
                 lastName: u.name.last,
                 gender: u.gender,
@@ -47,8 +53,7 @@ export const Users = observer(() => {
     function onUserClick(user: User) {
         const fullUser = usersStore.users.find(u => u.login.uuid === user.id);
         const userDetails: UserDetails = {
-            isNew: true,
-            id: user.id,
+            id : fullUser?.login.uuid,
             address: {
                 city: fullUser?.location.city || '',
                 state: fullUser?.location.state || '',
@@ -65,11 +70,12 @@ export const Users = observer(() => {
             lastName: user.lastName,
             gender: user.gender
         }
-        navigate(`/user`, { state: userDetails });
+        navigate(`/user/new`, { state: userDetails });
     }
 
     return <div>
-        <Filter onChange={onFilterChange} />
+        <Header />
+        <Filter onChange={onFilterChange} initialValue={usersStore.usersFilter}/>
         <UsersList users={filteredUsers || []} onUserClick={onUserClick} />
     </div>
 })

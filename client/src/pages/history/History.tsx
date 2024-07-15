@@ -6,8 +6,11 @@ import { Filter } from "../../components/Filter/Filter";
 import { UsersList } from "../../components/UsersList/UsersList";
 import { GetUser, User } from "../../interfaces/user.interface";
 import { UserDetails } from "../user/User";
+import { Header } from "../../components/layout/Header/Header";
+import { usersStore } from "../../store/users.store";
+import { observer } from "mobx-react-lite";
 
-export const History = () => {
+export const History = observer(() => {
     const navigate = useNavigate();
     const { data, isLoading } = useQuery({
         queryKey: ['history'], queryFn: async () => {
@@ -21,12 +24,17 @@ export const History = () => {
 
     useEffect(() => {
         if (data) {
-            setFilteredUsers(convertToUser(data));
+            filterUsers(usersStore.historyFilter);
         }
     }, [data])
 
 
     function onFilterChange(value: string) {
+        usersStore.setHistoryFilter(value);
+        filterUsers(value);
+    }
+
+    function filterUsers(value: string) {
         const valueLower = value.toLocaleLowerCase();
         setFilteredUsers(
             convertToUser((data as GetUser[]).filter((u: GetUser) => !valueLower ||
@@ -35,15 +43,14 @@ export const History = () => {
         );
     }
 
-
     function convertToUser(data: GetUser[]) {
         return data.map(u => {
             return {
                 id: u.id,
                 thumbnailUrl: u.thumbnailUrl,
-                title : u.title,
+                title: u.title,
                 firstName: u.firstName,
-                lastName : u.lastName,
+                lastName: u.lastName,
                 gender: u.gender,
                 country: u.address.state,
                 phoneNumber: u.contact.phone,
@@ -55,8 +62,6 @@ export const History = () => {
     function onUserClick(user: User) {
         const fullUser = data?.find(u => u.id === user.id) as GetUser;
         const userDetails: UserDetails = {
-            id: fullUser.id,
-            isNew: false,
             address: {
                 city: fullUser?.address.city || '',
                 state: fullUser?.address.state || '',
@@ -68,20 +73,21 @@ export const History = () => {
             },
             dateOfBirth: fullUser?.dateOfBirth || '',
             imageUrl: fullUser?.imageUrl || '',
-            title : fullUser.title,
+            title: fullUser.title,
             firstName: user.firstName,
             lastName: user.lastName,
             gender: user.gender
         }
-        navigate(`/user`, { state: userDetails });
+        navigate(`/user/${fullUser.id}`, { state: userDetails });
     }
 
     return <div>
+        <Header />
         {isLoading ? 'Loading...' :
             <>
-                <Filter onChange={onFilterChange} />
+                <Filter onChange={onFilterChange} initialValue={usersStore.historyFilter} />
                 <UsersList users={filteredUsers || []} onUserClick={onUserClick} />
             </>
         }
     </div>
-}
+})

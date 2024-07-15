@@ -14,6 +14,7 @@ import { Users } from './pages/users/Users';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { User } from './pages/user/User';
 import { History } from './pages/history/History';
+import { Header } from './components/layout/Header/Header';
 
 // Create a client
 const queryClient = new QueryClient()
@@ -34,7 +35,7 @@ const router = createBrowserRouter([
     element: <History />,
   },
   {
-    path: "user",
+    path: "user/:id",
     element: <User />
   },
 ]);

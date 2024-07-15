@@ -1,5 +1,7 @@
 
-import { getUsers, UserModel, writeUsers } from '../models/user.model'
+import { AddUserDto } from '../dtos/add-user.dto';
+import { UpdateUserDto } from '../dtos/update-user.dto';
+import { getUsers, writeUsers } from '../models/user.model';
 
 
 async function getAll() {
@@ -7,22 +9,32 @@ async function getAll() {
 }
 
 
-async function add(user: UserModel): Promise<void> {
+async function add(user: AddUserDto): Promise<void> {
     const users = await getUsers();
-    users.push(user);
+    if (!!users.find(u => u.id === user.id)) {
+        throw 'user exists';
+    }
+
+    users.push({
+        ...user
+    });
+
     await writeUsers(users);
 }
 
 
 
-async function update(user: UserModel): Promise<void> {
+async function update(id: string, user: UpdateUserDto): Promise<void> {
     const users = await getUsers();
-    const userIndex = users.findIndex(u => u.id === user.id);
+    const userIndex = users.findIndex(u => u.id === id);
     if (userIndex === -1) {
         throw 'not found'
     }
 
-    users[userIndex] = user;
+    users[userIndex] = {
+        ...users[userIndex],
+        ...user
+    };
     await writeUsers(users);
 }
 
